@@ -1,5 +1,10 @@
 import pygame
 
+# 屏幕常量
+SCREEN_RECT = pygame.Rect(0, 0, 480, 700)
+# 刷新帧率
+SCREEN_FPS = 60
+
 
 class GameSprite(pygame.sprite.Sprite):
 
