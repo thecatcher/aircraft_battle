@@ -14,7 +14,15 @@ class AircraftBattle():
         self.__create_sprites()
 
     def __create_sprites(self):
-        pass
+        # 创建背景精灵
+        # bg1 = Background("./images/background.png")
+        # bg2 = Background("./images/background.png")
+        # # 设置第二个背景初始位置在窗口正上方
+        # bg2.rect.y = -bg2.rect.height
+        bg1 = Background()
+        bg2 = Background(True)
+        # 创建精灵类
+        self.bg_group = pygame.sprite.Group(bg1, bg2)
 
     def start_game(self):
         print("游戏开始...")
@@ -41,7 +49,8 @@ class AircraftBattle():
         pass
 
     def __update_sprites(self):
-        pass
+        self.bg_group.update()
+        self.bg_group.draw(self.screen)
 
     @staticmethod
     def __game_over():
