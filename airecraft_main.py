@@ -1,3 +1,4 @@
+import  pygame
 from aircraft_sprites import *
 
 
@@ -12,6 +13,8 @@ class AircraftBattle():
         self.clock = pygame.time.Clock()
         # 3.调用私有方法,精灵和精灵组的创建
         self.__create_sprites()
+        # 调用timer函数,订阅敌机出场事件
+        pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
 
     def __create_sprites(self):
         # 创建背景精灵
@@ -19,10 +22,13 @@ class AircraftBattle():
         # bg2 = Background("./images/background.png")
         # # 设置第二个背景初始位置在窗口正上方
         # bg2.rect.y = -bg2.rect.height
+
         bg1 = Background()
         bg2 = Background(True)
-        # 创建精灵类
+        # 创建背景精灵组
         self.bg_group = pygame.sprite.Group(bg1, bg2)
+        # 创建敌机精灵组
+        self.enemy_group = pygame.sprite.Group()
 
     def start_game(self):
         print("游戏开始...")
@@ -44,6 +50,13 @@ class AircraftBattle():
             # 判断是否退出游戏
             if each_event.type == pygame.QUIT:
                 AircraftBattle.__game_over()
+            elif each_event.type == CREATE_ENEMY_EVENT:
+                print("敌机出场...")
+                # 创建敌机精灵
+                enemy = Enemy()
+                # 将敌机精灵添加到精灵组
+                self.enemy_group.add(enemy)
+
 
     def __check_collision(self):
         pass
@@ -51,6 +64,8 @@ class AircraftBattle():
     def __update_sprites(self):
         self.bg_group.update()
         self.bg_group.draw(self.screen)
+        self.enemy_group.update()
+        self.enemy_group.draw(self.screen)
 
     @staticmethod
     def __game_over():
