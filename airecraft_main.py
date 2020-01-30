@@ -1,4 +1,3 @@
-import  pygame
 from aircraft_sprites import *
 
 
@@ -15,6 +14,7 @@ class AircraftBattle():
         self.__create_sprites()
         # 调用timer函数,订阅敌机出场事件
         pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
+        pygame.time.set_timer(HERO_FIRE_EVENT, 500)
 
     def __create_sprites(self):
         # 创建背景精灵
@@ -29,6 +29,10 @@ class AircraftBattle():
         self.bg_group = pygame.sprite.Group(bg1, bg2)
         # 创建敌机精灵组
         self.enemy_group = pygame.sprite.Group()
+
+        # 创建英雄和英雄组
+        self.hero = Hero()
+        self.hero_group = pygame.sprite.Group(self.hero)
 
     def start_game(self):
         print("游戏开始...")
@@ -56,16 +60,40 @@ class AircraftBattle():
                 enemy = Enemy()
                 # 将敌机精灵添加到精灵组
                 self.enemy_group.add(enemy)
-
+            # elif each_event.type == pygame.KEYDOWN and each_event.key == pygame.K_RIGHT:
+            #     print("向右移动...")
+            elif each_event.type == HERO_FIRE_EVENT:
+                self.hero.fire()
+        keys_pressed = pygame.key.get_pressed()
+        if keys_pressed[pygame.K_RIGHT]:
+            self.hero.speed = 2
+        elif keys_pressed[pygame.K_LEFT]:
+            self.hero.speed = -2
+        else:
+            self.hero.speed = 0
 
     def __check_collision(self):
-        pass
+        # 子弹摧毁敌机
+        pygame.sprite.groupcollide(self.hero.bullets, self.enemy_group, True, True)
+
+        # 敌机撞毁英雄
+        enemys = pygame.sprite.spritecollide(self.hero, self.enemy_group, True)
+        if len(enemys) > 0:
+            self.hero.kill()
+            AircraftBattle.__game_over()
 
     def __update_sprites(self):
         self.bg_group.update()
         self.bg_group.draw(self.screen)
+
         self.enemy_group.update()
         self.enemy_group.draw(self.screen)
+
+        self.hero_group.update()
+        self.hero_group.draw(self.screen)
+
+        self.hero.bullets.update()
+        self.hero.bullets.draw(self.screen)
 
     @staticmethod
     def __game_over():
